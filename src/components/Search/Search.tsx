@@ -2,7 +2,7 @@ import React, {ChangeEvent} from 'react';
 import debounce from 'lodash/debounce';
 
 import {QUERY_DEBOUNCE_TIME, MIN_SEARCH_QUERY_LENGTH} from '../../constants';
-import {getSuggestions} from '../../libs/api';
+import {getSuggestions, cancel as axiosCancel} from '../../libs/api';
 import {parseQueryString} from '../../libs/strings';
 import './Search.css';
 
@@ -55,12 +55,22 @@ export function Search() {
 
         if (!value) {
             setResults([])
+
+            if (axiosCancel) {
+                axiosCancel()
+            }
         }
-    }, [value]);
+    }, [value])
 
     return (
         <div className="Search">
-            <input type="text" className="Search-input" value={value} onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value)} />
+            <input
+                placeholder="Search text"
+                type="text"
+                className="Search-input"
+                value={value}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
+            />
             <SearchList values={results} />
         </div>
     );
