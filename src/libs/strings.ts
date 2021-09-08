@@ -9,7 +9,7 @@ const getName = (str: string): string => {
     return str.replace(episodeRegex, '').trim() || ''
 }
 
-interface ParseQueryStringRes {
+export interface ParseQueryStringRes {
     name: string;
     episode: string;
 }

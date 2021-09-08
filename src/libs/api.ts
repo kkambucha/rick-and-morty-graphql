@@ -6,12 +6,12 @@ import {API_URL} from '../constants';
 const CancelToken = axios.CancelToken
 export let cancel: Canceler
 
-interface GetSuggestionsParams {
+export interface Suggestion {
     name: string;
     episode: string;
 }
 
-export const getSuggestions = async (params: GetSuggestionsParams) => {
+export const getSuggestions = async (params: Suggestion): Promise<[Suggestion] | []> => {
     try {
         const res = await axios({
             url: API_URL,
@@ -19,7 +19,7 @@ export const getSuggestions = async (params: GetSuggestionsParams) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            cancelToken: new CancelToken(function executor(c) { cancel = c }),
+            cancelToken: new CancelToken((c) => { cancel = c }),
             data: {
                 query: `
                 query {
@@ -36,5 +36,6 @@ export const getSuggestions = async (params: GetSuggestionsParams) => {
         return get(res, 'data.data.episodes.results', [])
     } catch(err) {
         console.log('There was a problem', err)
+        return []
     }
-};
+}

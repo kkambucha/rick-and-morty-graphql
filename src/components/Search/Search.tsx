@@ -2,34 +2,30 @@ import React, {ChangeEvent} from 'react';
 import debounce from 'lodash/debounce';
 
 import {QUERY_DEBOUNCE_TIME, MIN_SEARCH_QUERY_LENGTH} from '../../constants';
-import {getSuggestions, cancel as axiosCancel} from '../../libs/api';
-import {parseQueryString} from '../../libs/strings';
+import {getSuggestions, cancel as axiosCancel, Suggestion} from '../../libs/api';
+import {parseQueryString, ParseQueryStringRes} from '../../libs/strings';
 import './Search.css';
 
-interface SearchResult {
-    name: string;
-    episode: string;
-}
-
 interface SearchListProps {
-    values: SearchResult[],
+    values: Suggestion[],
 }
 
-function handleSearchSuggestionClick(suggestion: SearchResult): void {
-    console.log(`Click on ${suggestion.name} | ${suggestion.episode}`)
-}
+const SearchList: React.FC<SearchListProps> = ({values = []}) => {
 
-function SearchList({values = []}: SearchListProps) {
+    const handleSearchSuggestionClick = React.useRef((suggestion: Suggestion) => {
+        console.log(`Click on ${suggestion.name} | ${suggestion.episode}`)
+    })
+
     if (!values.length) return null
 
     return (
         <div className="Search-suggestions">
             <ul className="Search-suggestions-list">
-                {values.map((v: SearchResult) => (
+                {values.map((v: Suggestion) => (
                     <li
                         key={v.name}
                         className="Search-suggestions-item"
-                        onClick={() => handleSearchSuggestionClick(v)}
+                        onClick={() => handleSearchSuggestionClick.current(v)}
                     >
                         <b>Name:</b> {v.name} | <b>Episode:</b> {v.episode}
                     </li>
@@ -39,14 +35,14 @@ function SearchList({values = []}: SearchListProps) {
     );
 }
 
-export function Search() {
-    const [results, setResults] = React.useState([]);
-    const [value, setValue] = React.useState('');
+export const Search: React.FC = () => {
+    const [results, setResults] = React.useState<Suggestion[]>([])
+    const [value, setValue] = React.useState<string>('')
     const getSuggests = React.useRef(debounce(async (searchStr: string) => {
-        const queryParams = parseQueryString(searchStr)
-        const suggestions = await getSuggestions(queryParams)
+        const queryParams: ParseQueryStringRes = parseQueryString(searchStr)
+        const suggestions: Suggestion[] = await getSuggestions(queryParams)
         setResults(suggestions)
-    }, QUERY_DEBOUNCE_TIME));
+    }, QUERY_DEBOUNCE_TIME))
 
     React.useEffect(() => {
         if (value.length >= MIN_SEARCH_QUERY_LENGTH) {
