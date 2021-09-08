@@ -1,9 +1,13 @@
 .Search {
     position: relative;
+    width: 100%;
+    max-width: 500px;
 }
 
 .Search-input {
-    width: 400px;
+    max-width: 500px;
+    min-width: 300px;
+    width: 100%;
     padding: 8px 15px;
     font-size: 20px;
     font-weight: 400;
@@ -14,6 +18,7 @@
     border: 1px solid #ced4da;
     appearance: none;
     border-radius: 5px;
+    box-sizing: border-box;
 }
 
 .Search-input:focus {
@@ -23,7 +28,8 @@
 .Search-suggestions {
     position: absolute;
     background: #fff;
-    width: 432px;
+    max-width: 500px;
+    width: 100%;
     top: 60px;
     border-radius: 5px;
     overflow: hidden;
